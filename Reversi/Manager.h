@@ -87,14 +87,18 @@ enum class Board_State
 
 class Board
 {
+private:
+	int* m_candidate_pos;
 public:
 	Board();
 	~Board();
 	Board_State* m_board;
+	int m_candidate_size;
 	bool is_full();
 	bool enable_reverse(Pos2 search_pos, Pos2 select_direction, Board_State turn);
 	bool enable_put(int x, int y, Board_State turn);
 	void print_board();
+	void search_candidate(Board_State turn);
 };
 
 bool is_enemy_piece(Board_State my_state, Board_State target_state);

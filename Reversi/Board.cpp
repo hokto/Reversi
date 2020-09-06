@@ -1,4 +1,5 @@
 /*==== include ====*/
+#include"Manager.h"
 #include"Board.h"
 
 
@@ -24,6 +25,8 @@ bool is_enemy_piece(Board_State my_state, Board_State target_state)
 
 Board::Board()
 {
+	m_candidate_size = 0;
+	m_candidate_pos = nullptr;
 	//î’ñ ÇàÍéüå≥îzóÒÇ≈ìÆìIÇ…ämï€
 	m_board = (Board_State*)im->Alloc(BOARD_HEIGHT * BOARD_WIDTH*sizeof(Board_State));
 	//î’ñ èâä˙âª
@@ -91,16 +94,16 @@ bool Board::enable_put(int x, int y,Board_State turn)
 bool Board::enable_reverse(Pos2 search_pos, Pos2 select_direction, Board_State turn)
 {
 	int exchange_search_pos1 = to_pos1(search_pos.get_X(), search_pos.get_Y());
+	if (!search_pos.is_between() || m_board[exchange_search_pos1] == Board_State::None)
+	{
+		return false;
+	}
 	if (m_board[exchange_search_pos1]==turn)
 	{
 		return true;
 	}
 	else
 	{
-		if (m_board[exchange_search_pos1] == Board_State::None)
-		{
-			return false;
-		}
 		Pos2 next_search_pos=search_pos+select_direction;
 		bool is_reversed=enable_reverse(next_search_pos,select_direction,turn);
 		if (is_reversed)
@@ -113,25 +116,73 @@ bool Board::enable_reverse(Pos2 search_pos, Pos2 select_direction, Board_State t
 
 void Board::print_board()
 {
+	printf("  ");
+	for (int x = 0;x < BOARD_WIDTH;x++)
+	{
+		printf("%d ", x );
+	}
+	printf("\n");
+	int n = 0;
 	for (int y = 0;y < BOARD_HEIGHT;y++)
 	{
+		printf("%d", y );
 		for (int x = 0;x < BOARD_WIDTH;x++)
 		{
+			if (n < m_candidate_size && to_pos1(x, y) == m_candidate_pos[n])
+			{
+				printf("Å†");
+				n++;
+				continue;
+			}
 			switch (m_board[to_pos1(x, y)])
 			{
 			case Board_State::None:
-				printf("*");
+				printf("Å°");
 				break;
 			case Board_State::Black:
-				printf("B");
+				printf("Åõ");
 				break;
 			case Board_State::White:
-				printf("W");
+				printf("Åú");
 				break;
 			default:
 				break;
 			}
 		}
 		printf("\n");
+	}
+}
+
+void Board::search_candidate(Board_State turn)
+{
+	im->Free(m_candidate_pos);
+	m_candidate_size = 0;
+	m_candidate_pos = (int*)im->Alloc(BOARD_HEIGHT * BOARD_WIDTH * sizeof(Board_State));
+	for (int y = 0;y < BOARD_HEIGHT;y++)
+	{
+		for (int x = 0;x < BOARD_WIDTH;x++)
+		{
+			Board_State* copy_board = (Board_State*)im->Alloc(BOARD_HEIGHT * BOARD_WIDTH * sizeof(Board_State));
+			for (int i = 0;i < BOARD_HEIGHT;i++)
+			{
+				for (int j = 0;j < BOARD_WIDTH;j++)
+				{
+					copy_board[to_pos1(j, i)] = m_board[to_pos1(j, i)];
+				}
+			}
+			if (enable_put(x, y, turn))
+			{
+				for (int i = 0;i < BOARD_HEIGHT;i++)
+				{
+					for (int j = 0;j < BOARD_WIDTH;j++)
+					{
+						m_board[to_pos1(j, i)] = copy_board[to_pos1(j, i)];
+					}
+				}
+				m_candidate_pos[m_candidate_size] = to_pos1(x, y);
+				m_candidate_size++;
+			}
+			im->Free(copy_board);
+		}
 	}
 }
