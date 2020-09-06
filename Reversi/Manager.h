@@ -1,14 +1,14 @@
 #pragma once
 /*==== include ====*/
 #include<iostream>
-
-
+#include"iMemoryAllocator.h"
+#include"Allocator.h"
 
 //後に可変にするかも
 const int BOARD_WIDTH = 10;
 const int BOARD_HEIGHT = 10;
 //画面遷移用ステートマシーン
-enum class Scene_State : int
+enum Scene_State
 {
 	Initialize_State,
 	Start_State,
@@ -19,7 +19,7 @@ enum class Scene_State : int
 };
 
 //盤面状態
-enum class Board_State : int
+enum Board_State
 {
 	None,
 	Black,
@@ -38,10 +38,10 @@ public:
 		m_x = -1;
 		m_y = -1;
 	}
-	Pos2(int _x, int _y)
+	Pos2(int x, int y)
 	{
-		m_x = _x;
-		m_y = _y;
+		m_x = x;
+		m_y = y;
 	}
 
 	int get_X()
@@ -78,4 +78,11 @@ public:
 	}
 };
 
+//二次元の座標から、一次元の座標空間に変換
+int to_pos1(int x, int y);
 extern Scene_State current_state;
+
+//動的に確保する
+extern int* board;
+
+extern iMemoryAllocator* im; 
