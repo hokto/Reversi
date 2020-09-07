@@ -186,3 +186,12 @@ void Board::search_candidate(Board_State turn)
 		}
 	}
 }
+
+int Board::get_candidate(int idx)
+{
+	if (idx >= m_candidate_size)
+	{
+		return -1;
+	}
+	return m_candidate_pos[idx];
+}

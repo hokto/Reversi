@@ -7,6 +7,7 @@
 
 /*==== function ====*/
 int to_pos1(int x, int y);
+Pos2 to_pos2(int pos1);
 Board_State next_turn(Board_State current_turn);
 void UpDate();
 void Initialize();
@@ -18,11 +19,19 @@ Board* main_board;
 const int using_memory_size = 1 << 20;
 void* using_memory = new void* [using_memory_size];
 iMemoryAllocator* im = new Allocator(using_memory, using_memory_size);
-
+Board_State player_turn=Board_State::Black;
 
 int to_pos1(int x, int y)
 {
 	return BOARD_HEIGHT * y + x;
+}
+
+Pos2 to_pos2(int pos1)
+{
+	int x = pos1 % BOARD_HEIGHT;
+	int y = pos1 / BOARD_HEIGHT;
+	Pos2 ret_pos(x, y);
+	return ret_pos;
 }
 
 Board_State next_turn(Board_State current_turn)

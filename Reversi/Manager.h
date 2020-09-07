@@ -49,10 +49,9 @@ public:
 
 	Pos2 operator=(Pos2 rhs)
 	{
-		Pos2 temp_pos;
-		temp_pos.m_x = rhs.m_x;
-		temp_pos.m_y = rhs.m_y;
-		return temp_pos;
+		this->m_x = rhs.m_x;
+		this->m_y = rhs.m_y;
+		return *this;
 	}
 
 	Pos2 operator+(Pos2 lhs)
@@ -99,6 +98,7 @@ public:
 	bool enable_put(int x, int y, Board_State turn);
 	void print_board();
 	void search_candidate(Board_State turn);
+	int get_candidate(int idx);
 };
 
 bool is_enemy_piece(Board_State my_state, Board_State target_state);
@@ -116,6 +116,8 @@ const Pos2 direction[8] = { Left,Right,Up,Down,Left_Up,Left_Down,Right_Up,Right_
 //二次元の座標から、一次元の座標空間に変換
 int to_pos1(int x, int y);
 
+//一次元の座標から、二次元の座標空間に変換
+Pos2 to_pos2(int pos1);
 Board_State next_turn(Board_State current_turn);
 extern Scene_State current_state;
 
