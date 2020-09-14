@@ -2,6 +2,7 @@
 #include"Manager.h"
 #include"GameAI.h"
 #include"RandomAI.h"
+#include"Q_Learning.h"
 /*==== function ====*/
 void Game();
 
@@ -9,7 +10,11 @@ void Game()
 {
 	Board_State current_turn = Board_State::Black;
 	GameAI* ai;
-	ai = new RandomAI;
+	//ai = new RandomAI;
+	ai = new Q_Learning;
+	ai->learning();
+	current_state = Scene_State::Result_State;
+	return;
 	do
 	{
 		main_board->search_candidate(current_turn);
@@ -28,9 +33,18 @@ void Game()
 		}
 		if (main_board->m_candidate_size == 0)
 		{
-			printf("Pass!\n");
-			current_turn = next_turn(current_turn);
-			continue;
+			//ŒÝ‚¢‚É‚Ç‚±‚É‚à’u‚¯‚È‚¢‚È‚çƒQ[ƒ€‚ðI—¹‚·‚é
+			main_board->search_candidate(next_turn(current_turn));
+			if (main_board->m_candidate_size == 0)
+			{
+				break;
+			}
+			else
+			{
+				printf("Pass!\n");
+				current_turn = next_turn(current_turn);
+				continue;
+			}
 		}
 		Pos2 select_pos;
 		if (player_turn != current_turn)

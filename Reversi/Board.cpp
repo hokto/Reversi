@@ -65,11 +65,15 @@ bool Board::is_full()
 
 bool Board::enable_put(int x, int y,Board_State turn)
 {
+	Pos2 current_pos(x, y);
+	if (!current_pos.is_between())
+	{
+		return false;
+	}
 	if (m_board[to_pos1(x, y)] != Board_State::None)
 	{
 		return false;
 	}
-	Pos2 current_pos(x, y);
 	bool is_put = false;
 	for (Pos2 d : direction)
 	{
@@ -155,14 +159,14 @@ void Board::print_board()
 
 void Board::search_candidate(Board_State turn)
 {
-	im->Free(m_candidate_pos);
+	delete m_candidate_pos;
 	m_candidate_size = 0;
-	m_candidate_pos = (int*)im->Alloc(BOARD_HEIGHT * BOARD_WIDTH * sizeof(Board_State));
+	m_candidate_pos = new int[BOARD_HEIGHT * BOARD_WIDTH];
 	for (int y = 0;y < BOARD_HEIGHT;y++)
 	{
 		for (int x = 0;x < BOARD_WIDTH;x++)
 		{
-			Board_State* copy_board = (Board_State*)im->Alloc(BOARD_HEIGHT * BOARD_WIDTH * sizeof(Board_State));
+			Board_State* copy_board = new Board_State[BOARD_WIDTH*BOARD_WIDTH];
 			for (int i = 0;i < BOARD_HEIGHT;i++)
 			{
 				for (int j = 0;j < BOARD_WIDTH;j++)
@@ -182,7 +186,7 @@ void Board::search_candidate(Board_State turn)
 				m_candidate_pos[m_candidate_size] = to_pos1(x, y);
 				m_candidate_size++;
 			}
-			im->Free(copy_board);
+			delete copy_board;
 		}
 	}
 }
@@ -194,4 +198,41 @@ int Board::get_candidate(int idx)
 		return -1;
 	}
 	return m_candidate_pos[idx];
+}
+
+double Board::get_reward(Board_State turn)
+{
+	int white = 0;
+	int black = 0;
+	int none = 0;
+	for (int y = 0;y < BOARD_HEIGHT;y ++)
+	{
+		for (int x = 0;x < BOARD_WIDTH;x++)
+		{
+			switch(m_board[to_pos1(x, y)])
+			{
+			case Board_State::Black:
+				black++;
+				break;
+			case Board_State::White:
+				white++;
+				break;
+			case Board_State::None:
+				none++;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	int ret_val = 0;
+	if (turn == Board_State::Black)
+	{
+		ret_val = black - white;
+	}
+	else if (turn == Board_State::White)
+	{
+		ret_val = white - black;
+	}
+	return ret_val*(black+white+none)/(BOARD_WIDTH*BOARD_HEIGHT);
 }

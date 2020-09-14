@@ -143,6 +143,7 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Q_Learning.cpp" />
     <ClCompile Include="Result.cpp" />
     <ClCompile Include="Start.cpp" />
     <ClCompile Include="RandomAI.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="GameAI.h" />
     <ClInclude Include="iMemoryAllocator.h" />
     <ClInclude Include="Manager.h" />
+    <ClInclude Include="Q_Learning.h" />
     <ClInclude Include="RandomAI.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="Start.h" />

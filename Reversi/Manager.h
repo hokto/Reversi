@@ -1,13 +1,14 @@
 #pragma once
 /*==== include ====*/
 #include<iostream>
+#include<Windows.h>
 #include"Board.h"
 #include"iMemoryAllocator.h"
 #include"Allocator.h"
 
 //後に可変にするかも
-const int BOARD_WIDTH = 10;
-const int BOARD_HEIGHT = 10;
+const int BOARD_WIDTH = 8;
+const int BOARD_HEIGHT = 8;
 //画面遷移用ステートマシーン
 enum class Scene_State
 {
@@ -99,6 +100,7 @@ public:
 	void print_board();
 	void search_candidate(Board_State turn);
 	int get_candidate(int idx);
+	double get_reward(Board_State turn);
 };
 
 bool is_enemy_piece(Board_State my_state, Board_State target_state);
